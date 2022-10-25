@@ -17,13 +17,13 @@ import androidx.lifecycle.ViewModelProvider
 
 data class AirportData (
     val code: String,
-    val localisation: String
+    val localisation: String,
+    val icao: String
 ) {
     @Override
     public override fun toString(): String {
         return "        " + this.code + " - " + this.localisation
     }
-    //testtttt
 }
 
 class DialogAirportChoice : AppCompatDialogFragment() {
@@ -38,10 +38,16 @@ class DialogAirportChoice : AppCompatDialogFragment() {
 
         val view: View = inflater.inflate(R.layout.dialog_choice_airport, null)
 
-        val airportNamesList = ArrayList<AirportData>()
+        val airportList = ArrayList<AirportData>()
         viewModel.getAirportListLiveData().observe(this) {
-            for (airport in it){
-                airportNamesList.add(AirportData(airport.code, "${airport.city} - ${airport.country}"))
+            for (airport in it) {
+                airportList.add(
+                    AirportData(
+                        airport.code,
+                        "${airport.city} - ${airport.country}",
+                        airport.icao
+                    )
+                )
             }
         }
 
@@ -50,14 +56,14 @@ class DialogAirportChoice : AppCompatDialogFragment() {
             ArrayAdapter<AirportData>(
                 it,
                 android.R.layout.simple_spinner_item,
-                airportNamesList
+                airportList
             )
         }
         listview.setAdapter(adapter)
 
         listview.setOnItemClickListener(OnItemClickListener { parent, view, position, id ->
             Log.i("here", "Position=$position")
-            listener!!.applyAirportTexts(airportNamesList.get(position))
+            listener!!.applyAirportTexts(airportList.get(position))
             this.dismiss()
         })
         builder.setView(view)
