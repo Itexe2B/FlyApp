@@ -21,7 +21,7 @@ class RequestManager {
     companion object {
         fun get(
             sourceUrl: String?,
-            params: Map<String, String>?
+            params: HashMap<String, String>
         ): String? {
             val result = StringBuilder()
             var finalSourceUrl = sourceUrl

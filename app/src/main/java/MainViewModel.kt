@@ -5,10 +5,6 @@ import com.example.tp.Airport
 import com.example.tp.Utils
 import java.util.*
 
-/**
- * Created by sergio on 18/10/2022
- * All rights reserved GoodBarber
- */
 class MainViewModel : ViewModel() {
 
     private val beginDateLiveData = MutableLiveData<Calendar>(Calendar.getInstance())

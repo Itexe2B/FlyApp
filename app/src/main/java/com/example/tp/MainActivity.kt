@@ -19,7 +19,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoiceListener {
     @RequiresApi(Build.VERSION_CODES.M)
-    var depart: Boolean = true
+    var isArrival: Boolean = true
     private lateinit var viewModel: MainViewModel
     private lateinit var chooseAirport: AirportData
 
@@ -36,10 +36,10 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
         switchSelection.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 switchSelection.text = "Arriver"
-                this.depart = false
+                this.isArrival = true
             } else {
                 switchSelection.text = "Départ"
-                this.depart = true
+                this.isArrival = false
             }
         }
 
@@ -52,26 +52,26 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
         beginDateLabel.setOnClickListener { showDatePickerDialog(MainViewModel.DateType.BEGIN) }
         endDateLabel.setOnClickListener { showDatePickerDialog(MainViewModel.DateType.END) }
 
-        var begin: Long = 0
-        var end: Long = 0
-
         viewModel.getBeginDateLiveData().observe(this) {
             beginDateLabel.text = Utils.dateFormatterCustom(it.time)
-            begin = (it.timeInMillis / 1000).toLong()
         }
 
         viewModel.getEndDateLiveData().observe(this) {
             endDateLabel.text = Utils.dateFormatterCustom(it.time)
-            end = (it.timeInMillis / 1000).toLong()
         }
 
         val searchButton = this.findViewById<ImageButton>(R.id.search)
         searchButton.setOnClickListener { view: View ->
+            val begin = viewModel.getBeginDateLiveData().value!!.timeInMillis / 1000
+            // Date de fin
+            val end = viewModel.getEndDateLiveData().value!!.timeInMillis / 1000
+
             val intent = Intent(this, FlightListActivity::class.java)
             intent.putExtra("BEGIN", begin)
             intent.putExtra("END", end)
-            intent.putExtra("IS_ARRIVAL", depart)
+            intent.putExtra("IS_ARRIVAL", isArrival)
             intent.putExtra("ICAO", if(this.chooseAirport.icao != "") this.chooseAirport.icao else null)
+            //Todo Vérifier que l'interval est inférieur a 7j et que begin < end
             startActivity(intent)
         }
 
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
         val localisation = this.findViewById<TextView>(R.id.emplacementSelection)
         code.text = airportData.code
         localisation.text = airportData.localisation
-        Log.i("test Instance", this.depart.toString())
+        Log.i("test Instance", this.isArrival.toString())
     }
 
     private fun showDatePickerDialog(dateType: MainViewModel.DateType) {
