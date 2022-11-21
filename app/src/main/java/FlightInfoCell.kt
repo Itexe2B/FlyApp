@@ -11,10 +11,10 @@ import com.example.tp.R
 @SuppressLint("ViewConstructor")
 class FlightInfoCell : LinearLayout {
 
-    lateinit var depDateTextView: TextView
+    //lateinit var depDateTextView: TextView
     lateinit var depAirportTextView: TextView
     lateinit var depHourTextView: TextView
-    lateinit var arrDateTextView: TextView
+    //lateinit var arrDateTextView: TextView
     lateinit var arrAirportTextView: TextView
     lateinit var arrHourTextView: TextView
     lateinit var flightDurationTextView: TextView
@@ -50,12 +50,12 @@ class FlightInfoCell : LinearLayout {
     fun bindData(flight: FlightModel) {
         Log.d("TAG", "message")
         //fill your views
-        depDateTextView.text = flight.firstSeen.toString()
+        //depDateTextView.text = flight.firstSeen.toString()
         depAirportTextView.text = flight.estDepartureAirport
         //depHourTextView.text =
         flightNameTextView.text = "Fly number : " + flight.callsign
         flightDurationTextView.text = "Fly time : " +(flight.lastSeen - flight.firstSeen).toString()
-        arrDateTextView.text = flight.lastSeen.toString()
+        //arrDateTextView.text = flight.lastSeen.toString()
         arrAirportTextView.text = flight.estArrivalAirport
         //depHourTextView.text =
     }

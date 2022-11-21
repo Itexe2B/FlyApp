@@ -15,6 +15,15 @@ import kotlinx.coroutines.withContext
 
 class FlightListActivityViewModel : ViewModel() {
     private val flightListLiveData = MutableLiveData<List<FlightModel>>(ArrayList())
+    private val clickedFlightLiveData = MutableLiveData<FlightModel>()
+
+    fun getClickedFlightLiveData(): LiveData<FlightModel> {
+        return clickedFlightLiveData
+    }
+
+    fun setClickedFlightLiveData(flight: FlightModel) {
+        clickedFlightLiveData.value = flight
+    }
 
     fun getFlightListLiveData(): LiveData<List<FlightModel>> {
         return flightListLiveData

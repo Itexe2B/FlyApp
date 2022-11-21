@@ -5,6 +5,7 @@ import FlightListAdapter
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,15 +28,30 @@ class FlightListActivity : AppCompatActivity() {
 
         this.viewModel.doRequest()
 
-       viewModel.getFlightListLiveData().observe(this, Observer {
+       /*viewModel.getFlightListLiveData().observe(this, Observer {
             //findViewById<TextView>(R.id.textView).text = it.toString()
 
             //Récupérer le recyclerView
             val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
             // Attacher un Adapter
-            recyclerView.adapter = FlightListAdapter(it)
+            recyclerView.adapter = FlightListAdapter(it, this)
             // Attacher un LayoutManager
             recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        })*/
+
+        //val isTablet = findViewById<FragmentContainerView>(R.id.fragment_map_container) != null
+        viewModel.getClickedFlightLiveData().observe(this, Observer {
+            // Afficher le bon vol
+
+            //Si c'est le telephone alors on remplace le fragment de list par la map
+            //Sinon il y a deux containers
+            if (true) {
+                //remplacer le fragment
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fragment_list_container, FlightMapFragment.newInstance("", ""))
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
         })
     }
 }
