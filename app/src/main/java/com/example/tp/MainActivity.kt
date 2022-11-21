@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -20,9 +21,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoiceListener {
     @RequiresApi(Build.VERSION_CODES.M)
-    var isArrival: Boolean = true
+    var isArrival: Boolean = false
     private lateinit var viewModel: MainViewModel
-    private lateinit var chooseAirport: AirportData
+    private var chooseAirport: AirportData? = null
 
     @SuppressLint("NewApi")
     @RequiresApi(Build.VERSION_CODES.M)
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
         setContentView(R.layout.activity_main)
         val switchSelection = this.findViewById<Switch>(R.id.switchSelection)
         this.viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        this.chooseAirport = AirportData("", "", "")
         val aeroportSelection = this.findViewById<ConstraintLayout>(R.id.aeroportSelectionLayout)
 
         switchSelection.setOnCheckedChangeListener { _, isChecked ->
@@ -67,11 +67,30 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
             // Date de fin
             val end = viewModel.getEndDateLiveData().value!!.timeInMillis / 1000
 
+            //Security
+            if (this.chooseAirport == null){
+                val toast = Toast.makeText(this, "Veuillez choisir un aeroport", Toast.LENGTH_SHORT)
+                toast.show()
+                return@setOnClickListener
+            }
+
+            if (begin >= end){
+                val toast = Toast.makeText(this, "Veuillez choisir des dates valides", Toast.LENGTH_SHORT)
+                toast.show()
+                return@setOnClickListener
+            }
+
+            if ((end - begin) >= 604800 ){
+                val toast = Toast.makeText(this, "7j d'écart maximum", Toast.LENGTH_SHORT)
+                toast.show()
+                return@setOnClickListener
+            }
+
             val intent = Intent(this, FlightListActivity::class.java)
             intent.putExtra("BEGIN", begin)
             intent.putExtra("END", end)
             intent.putExtra("IS_ARRIVAL", isArrival)
-            intent.putExtra("ICAO", if(this.chooseAirport.icao != "") this.chooseAirport.icao else null)
+            intent.putExtra("ICAO", if(this.chooseAirport!!.icao != "") this.chooseAirport!!.icao else null)
             //Todo Vérifier que l'interval est inférieur a 7j et que begin < end
             startActivity(intent)
         }

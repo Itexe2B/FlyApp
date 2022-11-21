@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import java.util.*
@@ -67,11 +68,31 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.getFlightTrackListLiveData().observe(viewLifecycleOwner) {
             val polylineOptions = PolylineOptions()
+            var firstItem = true
+            var latitude: Double? = null
+            var lontitude: Double? = null
+
             it.path.forEach {
-                val latitude = it[1]
-                val lontitude = it[2]
-                polylineOptions.add(LatLng(latitude.toDouble(), lontitude.toDouble()))
+                latitude = it[1].toDouble()
+                lontitude = it[2].toDouble()
+                polylineOptions.add(LatLng(latitude!!, lontitude!!))
+                if (firstItem) {
+                    firstItem = false
+                    googleMap.addMarker(
+                        MarkerOptions()
+                            .position(LatLng(latitude!!, lontitude!!))
+                            .title("Départ")
+                    )
+                }
             }
+            if (latitude != null && lontitude != null) {
+                googleMap.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(latitude!!, lontitude!!))
+                        .title("Arrivé")
+                )
+            }
+
             /*googleMap.addMarker(
                 MarkerOptions()
                     .position(LatLng(42.0, 8.0))
