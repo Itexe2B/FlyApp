@@ -39,13 +39,13 @@ class FlightListActivity : AppCompatActivity() {
             recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         })*/
 
-        //val isTablet = findViewById<FragmentContainerView>(R.id.fragment_map_container) != null
+        val isTablet = findViewById<FragmentContainerView>(R.id.fragment_map_container) != null
         viewModel.getClickedFlightLiveData().observe(this, Observer {
             // Afficher le bon vol
 
             //Si c'est le telephone alors on remplace le fragment de list par la map
             //Sinon il y a deux containers
-            if (true) {
+            if (!isTablet) {
                 //remplacer le fragment
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragment_list_container, FlightMapFragment.newInstance("", ""))

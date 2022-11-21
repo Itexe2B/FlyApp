@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import java.util.*
 
+
 class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoiceListener {
     @RequiresApi(Build.VERSION_CODES.M)
     var isArrival: Boolean = true

@@ -2,15 +2,19 @@ package com.example.tp
 
 import FlightListActivityViewModel
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,11 +26,12 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FlightMapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FlightMapFragment : Fragment() {
+class FlightMapFragment : Fragment(), OnMapReadyCallback {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var viewModel : FlightListActivityViewModel
+    private lateinit var mapView: MapView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +43,30 @@ class FlightMapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mapView = view.findViewById<MapView>(R.id.mapView)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
         viewModel = ViewModelProvider(requireActivity()).get(FlightListActivityViewModel::class.java)
         viewModel.getClickedFlightLiveData().observe(viewLifecycleOwner, Observer {
-            //findViewById<TextView>(R.id.textView).text = it.toString()
-            view.findViewById<TextView>(R.id.label).text = it.callsign
-            })
+            view.findViewById<TextView>(R.id.callSignInformation).text = "Fly number : " + it.callsign
+            view.findViewById<TextView>(R.id.departLabelInformation).text = it.estDepartureAirport
+            view.findViewById<TextView>(R.id.arriverLabelInformation).text = it.estArrivalAirport
+            view.findViewById<TextView>(R.id.flyTimeInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.heureArriverLabelInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.heureDepartLabelInformation).text = "%02d:%02d".format(Date(it.firstSeen * 1000).hours, Date(it.firstSeen * 1000).minutes)
+        })
+
+
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        System.out.println("here")
+        googleMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(42.0, 8.0))
+                .title("Marker")
+        )
     }
 
     override fun onCreateView(
@@ -72,5 +95,20 @@ class FlightMapFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onResume() {
+        mapView.onResume()
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
     }
 }

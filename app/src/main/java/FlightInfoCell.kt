@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.tp.FlightModel
 import com.example.tp.R
+import java.util.*
 
 @SuppressLint("ViewConstructor")
 class FlightInfoCell : LinearLayout {
@@ -50,11 +51,12 @@ class FlightInfoCell : LinearLayout {
     fun bindData(flight: FlightModel) {
         Log.d("TAG", "message")
         //fill your views
-        //depDateTextView.text = flight.firstSeen.toString()
+        depHourTextView.text = "%02d:%02d".format(Date(flight.firstSeen * 1000).hours, Date(flight.firstSeen * 1000).minutes)
+        arrHourTextView.text = "%02d:%02d".format(Date(flight.lastSeen * 1000).hours, Date(flight.lastSeen * 1000).minutes)
         depAirportTextView.text = flight.estDepartureAirport
         //depHourTextView.text =
         flightNameTextView.text = "Fly number : " + flight.callsign
-        flightDurationTextView.text = "Fly time : " +(flight.lastSeen - flight.firstSeen).toString()
+        flightDurationTextView.text = "Fly time : " + "%02d:%02d".format(Date(flight.lastSeen * 1000 - flight.firstSeen * 1000).hours, Date(flight.lastSeen * 1000 - flight.firstSeen * 1000).minutes)
         //arrDateTextView.text = flight.lastSeen.toString()
         arrAirportTextView.text = flight.estArrivalAirport
         //depHourTextView.text =
