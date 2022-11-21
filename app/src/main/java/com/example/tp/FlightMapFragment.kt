@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import java.util.*
 
 
@@ -32,6 +32,7 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
     private var param2: String? = null
     private lateinit var viewModel : FlightListActivityViewModel
     private lateinit var mapView: MapView
+    private lateinit var flightModel: FlightModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,30 +44,43 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mapView = view.findViewById<MapView>(R.id.mapView)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
 
         viewModel = ViewModelProvider(requireActivity()).get(FlightListActivityViewModel::class.java)
         viewModel.getClickedFlightLiveData().observe(viewLifecycleOwner, Observer {
+            flightModel = it
             view.findViewById<TextView>(R.id.callSignInformation).text = "Fly number : " + it.callsign
             view.findViewById<TextView>(R.id.departLabelInformation).text = it.estDepartureAirport
             view.findViewById<TextView>(R.id.arriverLabelInformation).text = it.estArrivalAirport
             view.findViewById<TextView>(R.id.flyTimeInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
             view.findViewById<TextView>(R.id.heureArriverLabelInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
-            view.findViewById<TextView>(R.id.heureDepartLabelInformation).text = "%02d:%02d".format(Date(it.firstSeen * 1000).hours, Date(it.firstSeen * 1000).minutes)
         })
+
+        mapView = view.findViewById<MapView>(R.id.mapView)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
 
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        System.out.println("here")
-        googleMap.addMarker(
-            MarkerOptions()
-                .position(LatLng(42.0, 8.0))
-                .title("Marker")
-        )
+        viewModel.getPositionOfClickedFlight()
+
+        viewModel.getFlightTrackListLiveData().observe(viewLifecycleOwner) {
+            val polylineOptions = PolylineOptions()
+            it.path.forEach {
+                val latitude = it[1]
+                val lontitude = it[2]
+                polylineOptions.add(LatLng(latitude.toDouble(), lontitude.toDouble()))
+            }
+            /*googleMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(42.0, 8.0))
+                    .title("Départ")
+            )*/
+            googleMap.addPolyline(polylineOptions)
+        }
+
+
     }
 
     override fun onCreateView(

@@ -3,10 +3,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tp.Airport
-import com.example.tp.FlightModel
-import com.example.tp.RequestManager
-import com.example.tp.Utils
+import com.example.tp.*
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +12,12 @@ import kotlinx.coroutines.withContext
 
 class FlightListActivityViewModel : ViewModel() {
     private val flightListLiveData = MutableLiveData<List<FlightModel>>(ArrayList())
+    private val flightTrackListLiveData = MutableLiveData<FlightTrackModel>()
     private val clickedFlightLiveData = MutableLiveData<FlightModel>()
+
+    fun getFlightTrackListLiveData(): LiveData<FlightTrackModel> {
+        return flightTrackListLiveData
+    }
 
     fun getClickedFlightLiveData(): LiveData<FlightModel> {
         return clickedFlightLiveData
@@ -75,6 +77,25 @@ class FlightListActivityViewModel : ViewModel() {
                 }
 
                 flightListLiveData.value = flightList
+            }
+        }
+    }
+
+    fun getPositionOfClickedFlight(){
+        viewModelScope.launch {
+            var key = HashMap<String, String>()
+            key.put("time", clickedFlightLiveData.value!!.firstSeen.toString())
+            key.put("icao24", clickedFlightLiveData.value!!.icao24)
+
+            val result = withContext(Dispatchers.IO) {
+                RequestManager.getSuspended("https://opensky-network.org/api/tracks/all", key)
+            }
+
+            if (result != null) {
+                Log.i("Result", result)
+                val parser = JsonParser()
+                val jsonElement = parser.parse(result)
+                flightTrackListLiveData.value = Gson().fromJson(jsonElement, FlightTrackModel::class.java)
             }
         }
     }
