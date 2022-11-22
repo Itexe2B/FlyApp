@@ -5,15 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.tp.ui.theme.FlightInformation
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import java.util.*
 
 
@@ -32,7 +31,7 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var viewModel : FlightListActivityViewModel
-    private lateinit var mapView: MapView
+    private var mapView: MapView? = null
     private lateinit var flightModel: FlightModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,20 +44,35 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val moreInformation = view.findViewById<Button>(R.id.plusInformation)
+        moreInformation.setOnClickListener {
+            System.out.println("okok")
+            //change fragment
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragment_list_container, FlightInformation.newInstance("", ""))
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
+        view.visibility = View.INVISIBLE
+        view.isEnabled = false
+        mapView = view.findViewById<MapView>(R.id.mapView)
+        mapView!!.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(FlightListActivityViewModel::class.java)
         viewModel.getClickedFlightLiveData().observe(viewLifecycleOwner, Observer {
+            view.visibility = View.VISIBLE
+            view.isEnabled = true
             flightModel = it
-            view.findViewById<TextView>(R.id.callSignInformation).text = "Fly number : " + it.callsign
-            view.findViewById<TextView>(R.id.departLabelInformation).text = it.estDepartureAirport
-            view.findViewById<TextView>(R.id.arriverLabelInformation).text = it.estArrivalAirport
-            view.findViewById<TextView>(R.id.flyTimeInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
-            view.findViewById<TextView>(R.id.heureArriverLabelInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.callSignMoreInformation).text = "Fly number : " + it.callsign
+            view.findViewById<TextView>(R.id.departLabelMoreInformation).text = it.estDepartureAirport
+            view.findViewById<TextView>(R.id.arriverLabelMoreInformation).text = it.estArrivalAirport
+            view.findViewById<TextView>(R.id.flyTimeMoreInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.heureArriverLabelMoreInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
+            mapView!!.getMapAsync(this)
         })
 
-        mapView = view.findViewById<MapView>(R.id.mapView)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+
+
 
 
     }
@@ -71,7 +85,7 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
             var firstItem = true
             var latitude: Double? = null
             var lontitude: Double? = null
-
+            googleMap.clear()
             it.path.forEach {
                 latitude = it[1].toDouble()
                 lontitude = it[2].toDouble()
@@ -92,12 +106,6 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
                         .title("Arrivé")
                 )
             }
-
-            /*googleMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(42.0, 8.0))
-                    .title("Départ")
-            )*/
             googleMap.addPolyline(polylineOptions)
         }
 
@@ -133,17 +141,23 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onResume() {
-        mapView.onResume()
+        if (mapView != null) {
+            mapView!!.onResume()
+        }
         super.onResume()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView.onDestroy()
+        if (mapView != null) {
+            mapView!!.onDestroy()
+        }
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView.onLowMemory()
+        if (mapView != null) {
+            mapView!!.onLowMemory()
+        }
     }
 }

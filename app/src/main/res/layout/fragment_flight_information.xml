@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E4E5E9"
-    tools:context=".FlightMapFragment">
+    tools:context=".FlightInformation">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
@@ -118,7 +118,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/titleInformation"
+        android:id="@+id/titleMoreInformation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
@@ -130,7 +130,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/imageView4"
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:layout_marginTop="-26dp"
@@ -140,23 +140,11 @@
         app:layout_constraintTop_toTopOf="@+id/constraintLayout3" />
 
     <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
+        android:id="@+id/mapViewMoreInformation"
         android:layout_width="360dp"
         android:layout_height="330dp"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
-
-    <Button
-        android:id="@+id/plusInformation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="#E4E5E9"
-        android:text="Plus d'information sur l'avion"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-
