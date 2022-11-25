@@ -1,4 +1,6 @@
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,14 +11,27 @@ import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FlightListActivityViewModel : ViewModel() {
     private val flightListLiveData = MutableLiveData<List<FlightModel>>(ArrayList())
     private val flightTrackListLiveData = MutableLiveData<FlightTrackModel>()
+    private val flightStateListLiveData = MutableLiveData<FightStateModelArray>()
+    private val flightModelStateLiveData = MutableLiveData<FlightModel>()
     private val clickedFlightLiveData = MutableLiveData<FlightModel>()
+
+    fun getFlightModelStateLiveData(): LiveData<FlightModel> {
+        return flightModelStateLiveData
+    }
 
     fun getFlightTrackListLiveData(): LiveData<FlightTrackModel> {
         return flightTrackListLiveData
+    }
+
+    fun getFlightStateListLiveData(): LiveData<FightStateModelArray> {
+        return flightStateListLiveData
     }
 
     fun getClickedFlightLiveData(): LiveData<FlightModel> {
@@ -96,6 +111,62 @@ class FlightListActivityViewModel : ViewModel() {
                 val parser = JsonParser()
                 val jsonElement = parser.parse(result)
                 flightTrackListLiveData.value = Gson().fromJson(jsonElement, FlightTrackModel::class.java)
+            }
+        }
+    }
+
+    fun getCurrentPostionOfClickedFlight(){
+        viewModelScope.launch {
+            var key = HashMap<String, String>()
+            //key.put("time", Date().time.toString())
+            key.put("icao24", clickedFlightLiveData.value!!.icao24)
+            //key.put("icao24", "040141")
+
+            val result = withContext(Dispatchers.IO) {
+                RequestManager.getSuspended("https://opensky-network.org/api/states/all", key)
+            }
+
+            if (result != null) {
+                Log.i("Result", result)
+                val parser = JsonParser()
+                val jsonElement = parser.parse(result)
+                flightStateListLiveData.value = Gson().fromJson(jsonElement, FightStateModelArray::class.java)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun findingDepartureAndArrivalFromCurrentTrackedAirport(){
+        viewModelScope.launch {
+            var key = HashMap<String, String>()
+            //key.put("time", Date().time.toString())
+            //On a tous les départ et arrivé de l'avion su 48H
+            key.put("icao24", clickedFlightLiveData.value!!.icao24)
+            key.put("end", (Date().time + 86400).toString())
+            key.put("begin", (Date().time - 86400).toString())
+            //key.put("icao24", "040141")
+
+            val result = withContext(Dispatchers.IO) {
+                RequestManager.getSuspended("https://opensky-network.org/api/flights/aircraft", key)
+            }
+
+            if (result != null) {
+                Log.i("Result", result)
+                val parser = JsonParser()
+                val jsonElement = parser.parse(result)
+                var flightList = ArrayList<FlightModel>()
+                for (flyobject in jsonElement.asJsonArray){
+                    flightList.add(Gson().fromJson(flyobject.asJsonObject, FlightModel::class.java))
+                }
+
+                //find in flightList where current timestamp is between firstSeen and lastSeen
+                flightList.stream().filter { flightModel ->
+                    flightModel.firstSeen < Date().time
+                            && flightModel.lastSeen > Date().time
+                }.findFirst().get().let {
+                    flightListLiveData.value = listOf(it)
+                }
+
             }
         }
     }

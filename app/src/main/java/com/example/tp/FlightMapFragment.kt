@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.tp.ui.theme.FlightInformation
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import java.util.*
@@ -46,10 +45,9 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         val moreInformation = view.findViewById<Button>(R.id.plusInformation)
         moreInformation.setOnClickListener {
-            System.out.println("okok")
             //change fragment
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_list_container, FlightInformation.newInstance("", ""))
+            transaction.replace(R.id.fragment_map_container, FlightInformation.newInstance("", ""))
             transaction.addToBackStack(null)
             transaction.commit()
         }
@@ -63,18 +61,13 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
             view.visibility = View.VISIBLE
             view.isEnabled = true
             flightModel = it
-            view.findViewById<TextView>(R.id.callSignMoreInformation).text = "Fly number : " + it.callsign
-            view.findViewById<TextView>(R.id.departLabelMoreInformation).text = it.estDepartureAirport
-            view.findViewById<TextView>(R.id.arriverLabelMoreInformation).text = it.estArrivalAirport
-            view.findViewById<TextView>(R.id.flyTimeMoreInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
-            view.findViewById<TextView>(R.id.heureArriverLabelMoreInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.callSignInformation).text = "Fly number : " + it.callsign
+            view.findViewById<TextView>(R.id.departLabelInformation).text = it.estDepartureAirport
+            view.findViewById<TextView>(R.id.arriverLabelInformation).text = it.estArrivalAirport
+            view.findViewById<TextView>(R.id.flyTimeInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.heureArriverLabelInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
             mapView!!.getMapAsync(this)
         })
-
-
-
-
-
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

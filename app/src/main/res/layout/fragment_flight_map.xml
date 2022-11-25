@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/flyTimeMoreInformation"
+            android:id="@+id/flyTimeInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1h30"
@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="@+id/view2" />
 
         <TextView
-            android:id="@+id/departLabelMoreInformation"
+            android:id="@+id/departLabelInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="35dp"
@@ -45,18 +45,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/heureDepartLabelMoreInformation"
+            android:id="@+id/heureDepartLabelInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="13:30"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/departLabelMoreInformation"
-            app:layout_constraintStart_toStartOf="@+id/departLabelMoreInformation"
-            app:layout_constraintTop_toBottomOf="@+id/departLabelMoreInformation" />
+            app:layout_constraintEnd_toEndOf="@+id/departLabelInformation"
+            app:layout_constraintStart_toStartOf="@+id/departLabelInformation"
+            app:layout_constraintTop_toBottomOf="@+id/departLabelInformation" />
 
         <TextView
-            android:id="@+id/callSignMoreInformation"
+            android:id="@+id/callSignInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="27dp"
@@ -68,18 +68,18 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/heureArriverLabelMoreInformation"
+            android:id="@+id/heureArriverLabelInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="14:30"
             android:textColor="@color/black"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/arriverLabelMoreInformation"
-            app:layout_constraintEnd_toEndOf="@+id/arriverLabelMoreInformation"
-            app:layout_constraintStart_toStartOf="@+id/arriverLabelMoreInformation" />
+            app:layout_constraintBottom_toTopOf="@+id/arriverLabelInformation"
+            app:layout_constraintEnd_toEndOf="@+id/arriverLabelInformation"
+            app:layout_constraintStart_toStartOf="@+id/arriverLabelInformation" />
 
         <TextView
-            android:id="@+id/arriverLabelMoreInformation"
+            android:id="@+id/arriverLabelInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="21dp"
@@ -98,9 +98,9 @@
             android:layout_marginStart="14dp"
             android:background="#707070"
             android:rotation="25"
-            app:layout_constraintBottom_toBottomOf="@+id/heureDepartLabelMoreInformation"
-            app:layout_constraintStart_toEndOf="@+id/heureDepartLabelMoreInformation"
-            app:layout_constraintTop_toBottomOf="@+id/departLabelMoreInformation"
+            app:layout_constraintBottom_toBottomOf="@+id/heureDepartLabelInformation"
+            app:layout_constraintStart_toEndOf="@+id/heureDepartLabelInformation"
+            app:layout_constraintTop_toBottomOf="@+id/departLabelInformation"
             tools:ignore="MissingConstraints" />
 
         <View
@@ -110,9 +110,9 @@
             android:layout_marginEnd="14dp"
             android:background="#707070"
             android:rotation="25"
-            app:layout_constraintBottom_toTopOf="@+id/arriverLabelMoreInformation"
-            app:layout_constraintEnd_toStartOf="@+id/heureArriverLabelMoreInformation"
-            app:layout_constraintTop_toTopOf="@+id/heureArriverLabelMoreInformation"
+            app:layout_constraintBottom_toTopOf="@+id/arriverLabelInformation"
+            app:layout_constraintEnd_toStartOf="@+id/heureArriverLabelInformation"
+            app:layout_constraintTop_toTopOf="@+id/heureArriverLabelInformation"
             tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

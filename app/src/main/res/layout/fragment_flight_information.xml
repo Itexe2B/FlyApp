@@ -147,4 +147,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+    <TextView
+        android:id="@+id/vitesseLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Vitesse : "
+        app:layout_constraintStart_toStartOf="@+id/mapViewMoreInformation"
+        app:layout_constraintTop_toBottomOf="@+id/mapViewMoreInformation" />
+
+    <TextView
+        android:id="@+id/altitudeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:text="Altitude :"
+        app:layout_constraintStart_toStartOf="@+id/vitesseLabel"
+        app:layout_constraintTop_toBottomOf="@+id/vitesseLabel" />
+
+    <TextView
+        android:id="@+id/verticalRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="En descente"
+        app:layout_constraintEnd_toEndOf="@+id/mapViewMoreInformation"
+        app:layout_constraintTop_toBottomOf="@+id/mapViewMoreInformation" />
 </androidx.constraintlayout.widget.ConstraintLayout>

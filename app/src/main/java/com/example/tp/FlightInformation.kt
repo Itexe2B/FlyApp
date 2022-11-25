@@ -1,12 +1,22 @@
 package com.example.tp
 
+import FlightListActivityViewModel
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +32,9 @@ class FlightInformation : Fragment(), OnMapReadyCallback {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var viewModel : FlightListActivityViewModel
+    private var mapView: MapView? = null
+    private lateinit var flightStateModel: FightStateModelArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,10 +44,51 @@ class FlightInformation : Fragment(), OnMapReadyCallback {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //TODO Get current fly (time now), current position (voir state vector doc), detail of the fly
+        //TODO probleme fragment telephone, trouver pourquoi request ne marche pas (int a la place de string ?)
+        mapView = view.findViewById<MapView>(R.id.mapViewMoreInformation)
+        mapView!!.onCreate(savedInstanceState)
 
+        viewModel = ViewModelProvider(requireActivity()).get(FlightListActivityViewModel::class.java)
+        //Get position of the airsoft
+        viewModel.getCurrentPostionOfClickedFlight()
+        viewModel.getFlightStateListLiveData().observe(viewLifecycleOwner, Observer {
+            flightStateModel = it
+            if (flightStateModel.states != null) {
+                val speed = view.findViewById<TextView>(R.id.vitesseLabel)
+                speed.text = "Vitesse : " + flightStateModel.states!![0][9] + " m/s"
+
+                System.out.println(speed)
+                val altitude = view.findViewById<TextView>(R.id.altitudeLabel)
+                altitude.text = "Altitude : " + flightStateModel.states!![0][7]
+                System.out.println(altitude)
+
+                val direction = view.findViewById<TextView>(R.id.verticalRate)
+                if (flightStateModel.states!![0][11].toDouble() > 0) {
+                    direction.text = "Direction : " + "montée"
+                } else if (flightStateModel.states!![0][11].toDouble() < 0) {
+                    direction.text = "Direction : " + "descente"
+                } else {
+                    direction.text = "Direction : " + "stable"
+                }
+            }
+
+
+            mapView!!.getMapAsync(this)
+        })
+
+        viewModel.findingDepartureAndArrivalFromCurrentTrackedAirport()
+        viewModel.getFlightModelStateLiveData().observe(viewLifecycleOwner, Observer {
+            System.out.println(it)
+            view.findViewById<TextView>(R.id.callSignMoreInformation).text = "Fly number : " + it.callsign
+            view.findViewById<TextView>(R.id.departLabelMoreInformation).text = it.estDepartureAirport
+            view.findViewById<TextView>(R.id.arriverLabelMoreInformation).text = it.estArrivalAirport
+            view.findViewById<TextView>(R.id.flyTimeMoreInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000 - it.firstSeen * 1000).hours, Date(it.lastSeen * 1000 - it.firstSeen * 1000).minutes)
+            view.findViewById<TextView>(R.id.heureArriverLabelMoreInformation).text = "%02d:%02d".format(Date(it.lastSeen * 1000).hours, Date(it.lastSeen * 1000).minutes)
+
+        })
     }
 
     override fun onCreateView(
@@ -43,6 +97,7 @@ class FlightInformation : Fragment(), OnMapReadyCallback {
     ): View? {
 
         // Inflate the layout for this fragment
+        System.out.println("InflateLayout")
         return inflater.inflate(R.layout.fragment_flight_information, container, false)
     }
 
@@ -66,7 +121,33 @@ class FlightInformation : Fragment(), OnMapReadyCallback {
             }
     }
 
-    override fun onMapReady(p0: GoogleMap) {
-        TODO("Not yet implemented")
+    override fun onMapReady(googleMap: GoogleMap) {
+        if (flightStateModel.states != null) {
+            val position = LatLng(flightStateModel.states!![0][6].toDouble(), flightStateModel.states!![0][6].toDouble())
+            googleMap.clear()
+            googleMap.addMarker(MarkerOptions().position(position).title("Airplane Position"))
+        }
+
+    }
+
+    override fun onResume() {
+        if (mapView != null) {
+            mapView!!.onResume()
+        }
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mapView != null) {
+            mapView!!.onDestroy()
+        }
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        if (mapView != null) {
+            mapView!!.onLowMemory()
+        }
     }
 }
