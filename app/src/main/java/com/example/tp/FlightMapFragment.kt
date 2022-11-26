@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.*
@@ -46,8 +47,16 @@ class FlightMapFragment : Fragment(), OnMapReadyCallback {
         val moreInformation = view.findViewById<Button>(R.id.plusInformation)
         moreInformation.setOnClickListener {
             //change fragment
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_map_container, FlightInformation.newInstance("", ""))
+            val isPhone = view.findViewById<FragmentContainerView>(R.id.fragment_map_container) == null
+
+            val transaction = parentFragmentManager.beginTransaction()
+            if (isPhone){
+                //Si c'est un téléphone le fragment map container n'existe pas, la vu actuelle
+                //est le fragment_List_Container
+                transaction.replace(R.id.fragment_list_container, FlightInformation.newInstance("", ""))
+            } else {
+                transaction.replace(R.id.fragment_map_container, FlightInformation.newInstance("", ""))
+            }
             transaction.addToBackStack(null)
             transaction.commit()
         }

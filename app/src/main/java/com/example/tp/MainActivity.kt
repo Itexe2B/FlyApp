@@ -91,7 +91,6 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
             intent.putExtra("END", end)
             intent.putExtra("IS_ARRIVAL", isArrival)
             intent.putExtra("ICAO", if(this.chooseAirport!!.icao != "") this.chooseAirport!!.icao else null)
-            //Todo Vérifier que l'interval est inférieur a 7j et que begin < end
             startActivity(intent)
         }
 

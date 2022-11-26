@@ -142,8 +142,8 @@ class FlightListActivityViewModel : ViewModel() {
             //key.put("time", Date().time.toString())
             //On a tous les départ et arrivé de l'avion su 48H
             key.put("icao24", clickedFlightLiveData.value!!.icao24)
-            key.put("end", (Date().time + 86400).toString())
-            key.put("begin", (Date().time - 86400).toString())
+            key.put("end", ((Date().time / 1000) + 86400 ).toString())
+            key.put("begin", ((Date().time / 1000) - 86400).toString())
             //key.put("icao24", "040141")
 
             val result = withContext(Dispatchers.IO) {
@@ -160,13 +160,20 @@ class FlightListActivityViewModel : ViewModel() {
                 }
 
                 //find in flightList where current timestamp is between firstSeen and lastSeen
-                flightList.stream().filter { flightModel ->
+                /*flightList.stream().filter { flightModel ->
                     flightModel.firstSeen < Date().time
                             && flightModel.lastSeen > Date().time
                 }.findFirst().get().let {
-                    flightListLiveData.value = listOf(it)
+                    flightModelStateLiveData.value = it
+                }*/
+                System.out.println((Date().time / 1000))
+                flightList.forEach() { flightModel ->
+                    if (flightModel.firstSeen < (Date().time / 1000)
+                            && flightModel.lastSeen + 60 > (Date().time / 1000)) {
+                        System.out.println("here")
+                        flightModelStateLiveData.value = flightModel
+                    }
                 }
-
             }
         }
     }

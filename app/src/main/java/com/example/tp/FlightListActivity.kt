@@ -47,6 +47,7 @@ class FlightListActivity : AppCompatActivity() {
             //Sinon il y a deux containers
             if (!isTablet) {
                 //remplacer le fragment
+                System.out.println("here test")
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragment_list_container, FlightMapFragment.newInstance("", ""))
                 transaction.addToBackStack(null)
