@@ -131,6 +131,8 @@ class FlightListActivityViewModel : ViewModel() {
                 val parser = JsonParser()
                 val jsonElement = parser.parse(result)
                 flightStateListLiveData.value = Gson().fromJson(jsonElement, FightStateModelArray::class.java)
+            } else {
+                flightStateListLiveData.value = null
             }
         }
     }

@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity(), DialogAirportChoice.DialogAirportChoic
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
         setContentView(R.layout.activity_main)
         val switchSelection = this.findViewById<Switch>(R.id.switchSelection)
         this.viewModel = ViewModelProvider(this).get(MainViewModel::class.java)

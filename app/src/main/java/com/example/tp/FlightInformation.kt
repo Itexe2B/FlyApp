@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
@@ -47,7 +48,7 @@ class FlightInformation : Fragment(), OnMapReadyCallback {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //TODO probleme fragment telephone, trouver pourquoi request ne marche pas (int a la place de string ?)
+
         mapView = view.findViewById<MapView>(R.id.mapViewMoreInformation)
         mapView!!.onCreate(savedInstanceState)
 
@@ -73,6 +74,8 @@ class FlightInformation : Fragment(), OnMapReadyCallback {
                 } else {
                     direction.text = "Direction : " + "stable"
                 }
+            } else {
+                Toast.makeText(context, "Aucune information disponible", Toast.LENGTH_LONG).show()
             }
             mapView!!.getMapAsync(this)
         })
