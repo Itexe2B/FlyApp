@@ -139,8 +139,7 @@ class FlightListActivityViewModel : ViewModel() {
     fun findingDepartureAndArrivalFromCurrentTrackedAirport(){
         viewModelScope.launch {
             var key = HashMap<String, String>()
-            //key.put("time", Date().time.toString())
-            //On a tous les départ et arrivé de l'avion su 48H
+
             key.put("icao24", clickedFlightLiveData.value!!.icao24)
             key.put("end", ((Date().time / 1000) + 86400 ).toString())
             key.put("begin", ((Date().time / 1000) - 86400).toString())
@@ -159,13 +158,6 @@ class FlightListActivityViewModel : ViewModel() {
                     flightList.add(Gson().fromJson(flyobject.asJsonObject, FlightModel::class.java))
                 }
 
-                //find in flightList where current timestamp is between firstSeen and lastSeen
-                /*flightList.stream().filter { flightModel ->
-                    flightModel.firstSeen < Date().time
-                            && flightModel.lastSeen > Date().time
-                }.findFirst().get().let {
-                    flightModelStateLiveData.value = it
-                }*/
                 System.out.println((Date().time / 1000))
                 flightList.forEach() { flightModel ->
                     if (flightModel.firstSeen < (Date().time / 1000)

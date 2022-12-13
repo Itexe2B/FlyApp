@@ -25,4 +25,4 @@ data class FlightStateModel (val icao24: String,
 
 data class FightStateModelArray (
     val time: String,
-    val states: List<List<String>>?)
+    val states: List<List<String?>>?)
